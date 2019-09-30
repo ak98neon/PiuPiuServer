@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: piupiu-server
+  main:
+    banner-mode: "off"
+server:
+  port: 9091
