@@ -8,6 +8,9 @@ public class Rotation {
     private String z;
     private String w;
 
+    public Rotation() {
+    }
+
     public Rotation(String x, String y, String z, String w) {
         this.x = x;
         this.y = y;

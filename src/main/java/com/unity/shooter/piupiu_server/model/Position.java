@@ -7,6 +7,9 @@ public class Position {
     private String y;
     private String z;
 
+    public Position() {
+    }
+
     public Position(String x, String y, String z) {
         this.x = x;
         this.y = y;

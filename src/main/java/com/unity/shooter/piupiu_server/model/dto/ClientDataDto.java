@@ -3,20 +3,20 @@ package com.unity.shooter.piupiu_server.model.dto;
 import com.unity.shooter.piupiu_server.model.Position;
 import com.unity.shooter.piupiu_server.model.Rotation;
 
-import java.util.Objects;
-
 public class ClientDataDto {
     private String id;
     private Position position;
     private Rotation rotation;
+    private String action;
 
     public ClientDataDto() {
     }
 
-    public ClientDataDto(String id, Position position, Rotation rotation) {
+    public ClientDataDto(String id, Position position, Rotation rotation, String action) {
         this.id = id;
         this.position = position;
         this.rotation = rotation;
+        this.action = action;
     }
 
     public String getId() {
@@ -43,27 +43,11 @@ public class ClientDataDto {
         this.rotation = rotation;
     }
 
-    @Override
-    public String toString() {
-        return "ClientDataDto{" +
-                "id='" + id + '\'' +
-                ", position=" + position +
-                ", rotation=" + rotation +
-                '}';
+    public String getAction() {
+        return action;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ClientDataDto that = (ClientDataDto) o;
-        return Objects.equals(id, that.id) &&
-                Objects.equals(position, that.position) &&
-                Objects.equals(rotation, that.rotation);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, position, rotation);
+    public void setAction(String action) {
+        this.action = action;
     }
 }

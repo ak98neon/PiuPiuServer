@@ -8,16 +8,16 @@ public class ClientDataResponseDto {
     private String id;
     private Position position;
     private Rotation rotation;
-    private ClientStatus status;
+    private ClientStatus action;
 
     public ClientDataResponseDto() {
     }
 
-    public ClientDataResponseDto(String id, Position position, Rotation rotation, ClientStatus status) {
+    public ClientDataResponseDto(String id, Position position, Rotation rotation, ClientStatus action) {
         this.id = id;
         this.position = position;
         this.rotation = rotation;
-        this.status = status;
+        this.action = action;
     }
 
     public String getId() {
@@ -44,11 +44,11 @@ public class ClientDataResponseDto {
         this.rotation = rotation;
     }
 
-    public ClientStatus getStatus() {
-        return status;
+    public ClientStatus getAction() {
+        return action;
     }
 
-    public void setStatus(ClientStatus status) {
-        this.status = status;
+    public void setAction(ClientStatus action) {
+        this.action = action;
     }
 }
