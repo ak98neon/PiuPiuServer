@@ -97,6 +97,9 @@ public class Client {
                         position = clientDataDto.getPosition();
                         rotation = clientDataDto.getRotation();
                         listener.dataReceive(Client.this, string);
+                        if (clientDataDto.getAction().equals(ClientStatus.REMOVE.name())) {
+                            listener.removeClient(Client.this);
+                        }
                     }
                 } catch (IOException e) {
                     System.out.println(e.getMessage());

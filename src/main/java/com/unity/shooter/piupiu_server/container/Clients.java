@@ -25,6 +25,11 @@ public class Clients implements ReceiveListener {
     }
 
     @Override
+    public void removeClient(Client client) {
+        clients.remove(client);
+    }
+
+    @Override
     public void dataReceive(Client client, String data) {
         sendBroadcast(client, data);
     }
