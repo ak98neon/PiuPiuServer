@@ -37,7 +37,7 @@ public class Clients implements ReceiveListener {
     public void sendBroadcast(Client client, String data) {
         System.out.println("sendBroadcast");
         for (Client item : clients) {
-            if (item != client) {
+            if (!item.getId().equals(client.getId())) {
                 item.sendToClient(data);
             }
         }
@@ -45,17 +45,19 @@ public class Clients implements ReceiveListener {
 
     private void sendConnectNewPlayer(Client client) {
         System.out.println("sendConnectNewPlayer");
-        ClientDataResponseDto responseDto = new ClientDataResponseDto(client.getId(), client.getPosition(),
-                client.getRotation(), ClientStatus.NEW_CLIENT);
-        String json = gson.toJson(responseDto);
-        sendBroadcast(client, json);
+        for (Client item : clients) {
+            ClientDataResponseDto responseDto = new ClientDataResponseDto(client.getId(), client.getPosition(),
+                    client.getRotation(), ClientStatus.NEW_CLIENT);
+            String json = gson.toJson(responseDto);
+            sendBroadcast(client, json);
+        }
     }
 
     private void getAllPlayers(Client client) {
         System.out.println("getAllPlayers");
         for (Client item : clients) {
             if (item != client) {
-                ClientDataResponseDto responseDto = new ClientDataResponseDto(client.getId(), item.getPosition(),
+                ClientDataResponseDto responseDto = new ClientDataResponseDto(item.getId(), item.getPosition(),
                         item.getRotation(), ClientStatus.NEW_CLIENT);
                 String json = gson.toJson(responseDto);
                 client.sendToClient(json);

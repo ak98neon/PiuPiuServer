@@ -103,6 +103,12 @@ public class Client {
                     }
                 } catch (IOException e) {
                     System.out.println(e.getMessage());
+                    try {
+                        client.close();
+                        listener.removeClient(Client.this);
+                    } catch (IOException ex) {
+                        System.out.println(e.getMessage());
+                    }
                 }
             }
         }
