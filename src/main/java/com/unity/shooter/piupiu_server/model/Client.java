@@ -1,10 +1,12 @@
 package com.unity.shooter.piupiu_server.model;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.unity.shooter.piupiu_server.constants.ClientStatus;
 import com.unity.shooter.piupiu_server.model.dto.ClientDataDto;
 import com.unity.shooter.piupiu_server.model.dto.ClientDataResponseDto;
 import com.unity.shooter.piupiu_server.service.ReceiveListener;
+import com.unity.shooter.piupiu_server.util.ByteBufferUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,7 +23,7 @@ public class Client {
     private OutputStream outputStream;
     private String id = UUID.randomUUID().toString();
 
-    private Gson gson = new Gson();
+    private Gson gson = new GsonBuilder().setLenient().create();
 
     public Client(Socket client, ReceiveListener listener) throws IOException {
         this.client = client;
@@ -32,15 +34,6 @@ public class Client {
         rotation = new Rotation();
         new ReadThread().start();
         sendStart();
-    }
-
-    private static byte[] intToByteArray(int a) {
-        byte[] ret = new byte[4];
-        ret[0] = (byte) (a & 0xFF);
-        ret[1] = (byte) ((a >> 8) & 0xFF);
-        ret[2] = (byte) ((a >> 16) & 0xFF);
-        ret[3] = (byte) ((a >> 24) & 0xFF);
-        return ret;
     }
 
     public String getId() {
@@ -73,7 +66,7 @@ public class Client {
         try {
             System.out.println("sendToClient");
             byte[] bytes = json.getBytes();
-            byte[] bytesSize = intToByteArray(json.length());
+            byte[] bytesSize = ByteBufferUtil.intToByteArray(json.length());
             outputStream.write(bytesSize, 0, 4);
             outputStream.write(bytes, 0, bytes.length);
             outputStream.flush();
