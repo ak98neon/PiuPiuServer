@@ -79,7 +79,7 @@ public class Client {
         @Override
         public void run() {
             super.run();
-            byte[] bytes = new byte[1024];
+            byte[] bytes = new byte[4096];
             while (!client.isClosed()) {
                 try {
                     int data = inputStream.read(bytes);
