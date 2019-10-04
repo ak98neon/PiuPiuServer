@@ -2,6 +2,7 @@ package com.unity.shooter.piupiu_server.model;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonIOException;
 import com.unity.shooter.piupiu_server.constants.ClientStatus;
 import com.unity.shooter.piupiu_server.model.dto.ClientDataDto;
 import com.unity.shooter.piupiu_server.model.dto.ClientDataResponseDto;
@@ -79,7 +80,7 @@ public class Client {
         @Override
         public void run() {
             super.run();
-            byte[] bytes = new byte[4096];
+            byte[] bytes = new byte[1024];
             while (!client.isClosed()) {
                 try {
                     int data = inputStream.read(bytes);
@@ -94,7 +95,7 @@ public class Client {
                             listener.removeClient(Client.this);
                         }
                     }
-                } catch (IOException e) {
+                } catch (IOException | JsonIOException e) {
                     System.out.println(e.getMessage());
                     try {
                         client.close();
