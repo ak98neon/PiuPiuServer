@@ -85,14 +85,17 @@ public class Client {
                 try {
                     int data = inputStream.read(bytes);
                     if (data != -1) {
-                        String string = new String(bytes, 0, data);
-                        System.out.println(string);
-                        ClientDataDto clientDataDto = gson.fromJson(string, ClientDataDto.class);
-                        position = clientDataDto.getPosition();
-                        rotation = clientDataDto.getRotation();
-                        listener.dataReceive(Client.this, string);
-                        if (clientDataDto.getAction().equals(ClientStatus.REMOVE.name())) {
-                            listener.removeClient(Client.this);
+                        String buffString = new String(bytes, 0, data);
+                        String[] listRequest = buffString.split("\n");
+                        for (String string : listRequest) {
+                            System.out.println(string);
+                            ClientDataDto clientDataDto = gson.fromJson(string, ClientDataDto.class);
+                            position = clientDataDto.getPosition();
+                            rotation = clientDataDto.getRotation();
+                            listener.dataReceive(Client.this, string);
+                            if (clientDataDto.getAction().equals(ClientStatus.REMOVE.name())) {
+                                listener.removeClient(Client.this);
+                            }
                         }
                     }
                 } catch (IOException | JsonIOException e) {
