@@ -88,7 +88,7 @@ public class Client {
                         String buffString = new String(bytes, 0, data);
                         String[] listRequest = buffString.split("\n");
                         for (String string : listRequest) {
-//                            string = string.replaceAll("[.]", ",");
+                            string = string.replaceAll("[.]", ",");
                             System.out.println(string);
                             ClientDataDto clientDataDto = gson.fromJson(string, ClientDataDto.class);
                             position = clientDataDto.getPosition();
