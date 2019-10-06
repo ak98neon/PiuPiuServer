@@ -1,13 +1,9 @@
 package com.unity.shooter.piupiu_server;
 
-import com.unity.shooter.piupiu_server.container.Clients;
-import com.unity.shooter.piupiu_server.model.Client;
+import com.unity.shooter.piupiu_server.netty.NettyServer;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import java.net.ServerSocket;
-import java.net.Socket;
 
 @SpringBootApplication
 public class PiupiuServerApplication implements CommandLineRunner {
@@ -16,16 +12,8 @@ public class PiupiuServerApplication implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws Exception {
-        Clients clients = new Clients();
-
-        ServerSocket serverSocket = new ServerSocket(16000);
-        while (true) {
-            System.out.println("Wait client");
-            Socket socket = serverSocket.accept();
-            System.out.println("Client connected");
-            Client client = new Client(socket, clients);
-            clients.addClient(client);
-        }
+    public void run(String... args) throws InterruptedException {
+        int port = args.length > 0 ? Integer.parseInt(args[0]) : 9092;
+        new NettyServer(port).run();
     }
 }
