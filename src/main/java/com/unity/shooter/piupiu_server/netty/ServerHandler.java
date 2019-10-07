@@ -6,13 +6,17 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.util.CharsetUtil;
 
+import java.net.SocketAddress;
+
 public class ServerHandler extends SimpleChannelInboundHandler<DatagramPacket> {
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, DatagramPacket o) throws Exception {
+        SocketAddress remoteAddress = o.sender();
+
         ByteBuf byteBuf = o.content();
-        String in = byteBuf.toString(CharsetUtil.UTF_8);//превращаем данные в строку с нужной кодировкой
+        String in = byteBuf.toString(CharsetUtil.UTF_8);
         System.out.println(in);
-        System.out.println();
+        channelHandlerContext.writeAndFlush("Response from netty: HI!");
     }
 
     @Override
