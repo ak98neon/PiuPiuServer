@@ -7,8 +7,6 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.util.CharsetUtil;
 
-import java.net.SocketAddress;
-
 public class ServerHandler extends SimpleChannelInboundHandler<DatagramPacket> {
     private ChannelClients channelClients;
 
@@ -18,10 +16,10 @@ public class ServerHandler extends SimpleChannelInboundHandler<DatagramPacket> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, DatagramPacket o) {
-        SocketAddress remoteAddress = o.sender();
-        if (!channelClients.isAddressExist(remoteAddress)) {
-            channelClients.addNewClient(remoteAddress);
-            System.out.println("Add new client: " + remoteAddress);
+        String hostName = o.sender().getAddress().getHostAddress();
+        if (!channelClients.isAddressExist(hostName)) {
+            channelClients.addNewClient(hostName);
+            System.out.println("Add new client: " + hostName);
         }
 
         ByteBuf byteBuf = o.content();
