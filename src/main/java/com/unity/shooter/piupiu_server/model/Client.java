@@ -16,9 +16,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 public class Client {
-    public volatile Position position;
-    public volatile Rotation rotation;
-    private Socket client;
+    private volatile Position position;
+    private volatile Rotation rotation;
+    private Socket clientSocketConnection;
     private ReceiveListener listener;
     private InputStream inputStream;
     private OutputStream outputStream;
@@ -26,11 +26,11 @@ public class Client {
 
     private Gson gson = new GsonBuilder().setLenient().create();
 
-    public Client(Socket client, ReceiveListener listener) throws IOException {
-        this.client = client;
+    public Client(Socket clientSocketConnection, ReceiveListener listener) throws IOException {
+        this.clientSocketConnection = clientSocketConnection;
         this.listener = listener;
-        inputStream = client.getInputStream();
-        outputStream = client.getOutputStream();
+        inputStream = clientSocketConnection.getInputStream();
+        outputStream = clientSocketConnection.getOutputStream();
         position = new Position();
         rotation = new Rotation();
         new ReadThread().start();
@@ -83,7 +83,7 @@ public class Client {
             int sizeOfBuffer = 4096;
             byte[] bytes = new byte[sizeOfBuffer];
             int len = 0;
-            while (!client.isClosed()) {
+            while (!clientSocketConnection.isClosed()) {
                 try {
                     int data = inputStream.read(bytes);
                     if (data != -1) {
@@ -94,7 +94,7 @@ public class Client {
                 } catch (IOException | JsonIOException e) {
                     System.out.println(e.getMessage());
                     try {
-                        client.close();
+                        clientSocketConnection.close();
                         listener.removeClient(Client.this);
                     } catch (IOException ex) {
                         System.out.println(e.getMessage());
