@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 public class Client {
@@ -75,41 +76,20 @@ public class Client {
         }
     }
 
-    private boolean isNumeric(String strNum) {
-        try {
-            Double.parseDouble(strNum);
-            return true;
-        } catch (NumberFormatException | NullPointerException nfe) {
-            return false;
-        }
-    }
-
     private class ReadThread extends Thread {
         @Override
         public void run() {
             super.run();
-            byte[] bytes = new byte[4096];
+            int sizeOfBuffer = 4096;
+            byte[] bytes = new byte[sizeOfBuffer];
             int len = 0;
             while (!client.isClosed()) {
                 try {
                     int data = inputStream.read(bytes);
                     if (data != -1) {
-                        String buffString = new String(bytes, 0, data);
-                        if (isNumeric(buffString)) {
-                            len = Integer.parseInt(buffString);
-                        } else if (bytes.length >= len) {
-                            String requestJson = new String(bytes, 0, len);
-                            System.out.println(requestJson);
+                        String buffString = new String(bytes, 0, data, StandardCharsets.US_ASCII);
 
-                            ClientDataDto clientDataDto = gson.fromJson(requestJson, ClientDataDto.class);
-                            position = clientDataDto.getPosition();
-                            rotation = clientDataDto.getRotation();
-
-                            listener.dataReceive(Client.this, requestJson);
-                            if (clientDataDto.getAction() == ClientStatus.REMOVE) {
-                                listener.removeClient(Client.this);
-                            }
-                        }
+                        len = parseRequest(bytes, len, buffString);
                     }
                 } catch (IOException | JsonIOException e) {
                     System.out.println(e.getMessage());
@@ -120,6 +100,36 @@ public class Client {
                         System.out.println(e.getMessage());
                     }
                 }
+            }
+        }
+
+        private int parseRequest(byte[] bytes, int len, String buffString) {
+            if (isNumeric(buffString)) {
+                len = Integer.parseInt(buffString);
+            } else if (buffString.length() == len
+                    && buffString.startsWith("{")
+                    && buffString.endsWith("}")) {
+                String requestJson = new String(bytes, 0, len);
+                System.out.println(requestJson);
+
+                ClientDataDto clientDataDto = gson.fromJson(requestJson, ClientDataDto.class);
+                position = clientDataDto.getPosition();
+                rotation = clientDataDto.getRotation();
+
+                listener.dataReceive(Client.this, requestJson);
+                if (clientDataDto.getAction() == ClientStatus.REMOVE) {
+                    listener.removeClient(Client.this);
+                }
+            }
+            return len;
+        }
+
+        private boolean isNumeric(String strNum) {
+            try {
+                Double.parseDouble(strNum);
+                return true;
+            } catch (NumberFormatException | NullPointerException nfe) {
+                return false;
             }
         }
     }
