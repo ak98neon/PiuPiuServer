@@ -61,6 +61,6 @@ public final class ChannelClients {
         InetSocketAddress inetSocketAddress = new InetSocketAddress(clientAddress.getHostName(), 16000);
         DatagramPacket datagramPacket = new DatagramPacket(content, inetSocketAddress);
         System.out.println("Send to: " + inetSocketAddress);
-        channelHandlerContext.writeAndFlush(datagramPacket.retain());
+        channelHandlerContext.writeAndFlush(datagramPacket);
     }
 }
