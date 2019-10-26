@@ -97,7 +97,7 @@ public class Client {
                         String buffString = new String(bytes, 0, data);
                         if (isNumeric(buffString)) {
                             len = Integer.parseInt(buffString);
-                        } else {
+                        } else if (bytes.length >= len) {
                             String requestJson = new String(bytes, 0, len);
                             System.out.println(requestJson);
 
