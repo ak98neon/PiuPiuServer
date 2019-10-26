@@ -3,7 +3,7 @@ package com.unity.shooter.piupiu_server.container;
 import com.google.gson.Gson;
 import com.unity.shooter.piupiu_server.constants.ClientStatus;
 import com.unity.shooter.piupiu_server.model.Client;
-import com.unity.shooter.piupiu_server.model.dto.ClientDataResponseDto;
+import com.unity.shooter.piupiu_server.model.dto.ClientDataDto;
 import com.unity.shooter.piupiu_server.service.ReceiveListener;
 
 import java.util.ArrayList;
@@ -46,7 +46,7 @@ public class Clients implements ReceiveListener {
     private void sendConnectNewPlayer(Client client) {
         System.out.println("sendConnectNewPlayer");
         for (Client item : clients) {
-            ClientDataResponseDto responseDto = new ClientDataResponseDto(client.getId(), client.getPosition(),
+            ClientDataDto responseDto = new ClientDataDto(client.getId(), client.getPosition(),
                     client.getRotation(), ClientStatus.NEW_CLIENT);
             String json = gson.toJson(responseDto);
             sendBroadcast(client, json);
@@ -57,7 +57,7 @@ public class Clients implements ReceiveListener {
         System.out.println("getAllPlayers");
         for (Client item : clients) {
             if (item != client) {
-                ClientDataResponseDto responseDto = new ClientDataResponseDto(item.getId(), item.getPosition(),
+                ClientDataDto responseDto = new ClientDataDto(item.getId(), item.getPosition(),
                         item.getRotation(), ClientStatus.NEW_CLIENT);
                 String json = gson.toJson(responseDto);
                 client.sendToClient(json);

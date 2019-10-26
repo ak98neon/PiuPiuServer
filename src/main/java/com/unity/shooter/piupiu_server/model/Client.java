@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.unity.shooter.piupiu_server.constants.ClientStatus;
 import com.unity.shooter.piupiu_server.model.dto.ClientDataDto;
-import com.unity.shooter.piupiu_server.model.dto.ClientDataResponseDto;
 import com.unity.shooter.piupiu_server.service.ReceiveListener;
 import com.unity.shooter.piupiu_server.util.ByteBufferUtil;
 
@@ -58,7 +57,7 @@ public class Client {
     }
 
     private void sendStart() {
-        ClientDataResponseDto responseDto = new ClientDataResponseDto(id, position, rotation, ClientStatus.NEW_SESSION);
+        ClientDataDto responseDto = new ClientDataDto(id, position, rotation, ClientStatus.NEW_SESSION);
         String json = gson.toJson(responseDto);
         sendToClient(json);
     }
@@ -88,7 +87,6 @@ public class Client {
                         String buffString = new String(bytes, 0, data);
                         String[] listRequest = buffString.split("\n");
                         for (String string : listRequest) {
-//                            string = string.replaceAll("[.]", ",");
                             System.out.println(string);
                             ClientDataDto clientDataDto = gson.fromJson(string, ClientDataDto.class);
                             position = clientDataDto.getPosition();
