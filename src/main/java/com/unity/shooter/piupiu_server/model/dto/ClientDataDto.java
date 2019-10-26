@@ -10,10 +10,10 @@ public class ClientDataDto {
     private Rotation rotation;
     private ClientStatus action;
 
-    public ClientDataDto() {
+    public ClientDataResponseDto() {
     }
 
-    public ClientDataDto(String id, Position position, Rotation rotation, ClientStatus action) {
+    public ClientDataResponseDto(String id, Position position, Rotation rotation, ClientStatus action) {
         this.id = id;
         this.position = position;
         this.rotation = rotation;
