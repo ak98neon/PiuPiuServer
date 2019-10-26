@@ -75,24 +75,38 @@ public class Client {
         }
     }
 
+    private boolean isNumeric(String strNum) {
+        try {
+            Double.parseDouble(strNum);
+            return true;
+        } catch (NumberFormatException | NullPointerException nfe) {
+            return false;
+        }
+    }
+
     private class ReadThread extends Thread {
         @Override
         public void run() {
             super.run();
             byte[] bytes = new byte[4096];
+            int len = 0;
             while (!client.isClosed()) {
                 try {
                     int data = inputStream.read(bytes);
                     if (data != -1) {
                         String buffString = new String(bytes, 0, data);
-                        String[] listRequest = buffString.split("\n");
-                        for (String string : listRequest) {
-                            System.out.println(string);
-                            ClientDataDto clientDataDto = gson.fromJson(string, ClientDataDto.class);
+                        if (isNumeric(buffString)) {
+                            len = Integer.parseInt(buffString);
+                        } else {
+                            String requestJson = new String(bytes, 0, len);
+                            System.out.println(requestJson);
+
+                            ClientDataDto clientDataDto = gson.fromJson(requestJson, ClientDataDto.class);
                             position = clientDataDto.getPosition();
                             rotation = clientDataDto.getRotation();
-                            listener.dataReceive(Client.this, string);
-                            if (clientDataDto.getAction().equals(ClientStatus.REMOVE.name())) {
+
+                            listener.dataReceive(Client.this, requestJson);
+                            if (clientDataDto.getAction() == ClientStatus.REMOVE) {
                                 listener.removeClient(Client.this);
                             }
                         }
