@@ -1,18 +1,19 @@
 package com.unity.shooter.piupiu_server.model.dto;
 
+import com.unity.shooter.piupiu_server.constants.ClientStatus;
 import com.unity.shooter.piupiu_server.model.Position;
 import com.unity.shooter.piupiu_server.model.Rotation;
 
-public class ClientDataDto {
+public class ClientDataResponseDto {
     private String id;
     private Position position;
     private Rotation rotation;
-    private String action;
+    private ClientStatus action;
 
-    public ClientDataDto() {
+    public ClientDataResponseDto() {
     }
 
-    public ClientDataDto(String id, Position position, Rotation rotation, String action) {
+    public ClientDataResponseDto(String id, Position position, Rotation rotation, ClientStatus action) {
         this.id = id;
         this.position = position;
         this.rotation = rotation;
@@ -43,11 +44,11 @@ public class ClientDataDto {
         this.rotation = rotation;
     }
 
-    public String getAction() {
+    public ClientStatus getAction() {
         return action;
     }
 
-    public void setAction(String action) {
+    public void setAction(ClientStatus action) {
         this.action = action;
     }
 }

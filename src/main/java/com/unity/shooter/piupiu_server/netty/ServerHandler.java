@@ -1,6 +1,5 @@
 package com.unity.shooter.piupiu_server.netty;
 
-import com.unity.shooter.piupiu_server.container.ChannelClients;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -10,19 +9,9 @@ import io.netty.util.CharsetUtil;
 import java.net.SocketAddress;
 
 public class ServerHandler extends SimpleChannelInboundHandler<DatagramPacket> {
-    private ChannelClients channelClients;
-
-    public ServerHandler() {
-        this.channelClients = new ChannelClients();
-    }
-
     @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, DatagramPacket o) {
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, DatagramPacket o) throws Exception {
         SocketAddress remoteAddress = o.sender();
-        if (!channelClients.isAddressExist(remoteAddress)) {
-            channelClients.addNewClient(remoteAddress);
-            System.out.println("Add new client: " + remoteAddress);
-        }
 
         ByteBuf byteBuf = o.content();
         String in = byteBuf.toString(CharsetUtil.UTF_8);
@@ -31,8 +20,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<DatagramPacket> {
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        ctx.close();
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         System.out.println(cause.getMessage());
     }
 }
