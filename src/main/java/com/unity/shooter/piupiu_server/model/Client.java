@@ -15,6 +15,8 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
+import static com.unity.shooter.piupiu_server.util.NumberUtil.isNumeric;
+
 public class Client {
     private volatile Position position;
     private volatile Rotation rotation;
@@ -45,16 +47,8 @@ public class Client {
         return position;
     }
 
-    public void setPosition(Position position) {
-        this.position = position;
-    }
-
     public Rotation getRotation() {
         return rotation;
-    }
-
-    public void setRotation(Rotation rotation) {
-        this.rotation = rotation;
     }
 
     private void sendStart() {
@@ -122,15 +116,6 @@ public class Client {
                 }
             }
             return len;
-        }
-
-        private boolean isNumeric(String strNum) {
-            try {
-                Double.parseDouble(strNum);
-                return true;
-            } catch (NumberFormatException | NullPointerException nfe) {
-                return false;
-            }
         }
     }
 }
