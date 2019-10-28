@@ -3,6 +3,7 @@ package com.unity.shooter.piupiu_server.model;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 import com.unity.shooter.piupiu_server.constants.ClientStatus;
 import com.unity.shooter.piupiu_server.model.dto.ClientDataDto;
 import com.unity.shooter.piupiu_server.service.ReceiveListener;
@@ -85,6 +86,7 @@ public class Client {
                             if (patternOfDelimeter[0] == bytes[i]) {
                                 bytes[i] = 0;
                                 parseRequest(bytes, i);
+                                break;
                             }
                         }
                     }
@@ -104,13 +106,17 @@ public class Client {
             String requestJson = new String(bytes, 0, indexOfDelimeter);
             System.out.println(requestJson);
 
-            ClientDataDto clientDataDto = gson.fromJson(requestJson, ClientDataDto.class);
-            position = clientDataDto.getPosition();
-            rotation = clientDataDto.getRotation();
+            try {
+                ClientDataDto clientDataDto = gson.fromJson(requestJson, ClientDataDto.class);
+                position = clientDataDto.getPosition();
+                rotation = clientDataDto.getRotation();
 
-            listener.dataReceive(Client.this, requestJson);
-            if (clientDataDto.getAction() == ClientStatus.REMOVE) {
-                listener.removeClient(Client.this);
+                listener.dataReceive(Client.this, requestJson);
+                if (clientDataDto.getAction() == ClientStatus.REMOVE) {
+                    listener.removeClient(Client.this);
+                }
+            } catch (JsonSyntaxException e) {
+                System.out.println("Bad string " + requestJson);
             }
         }
     }
