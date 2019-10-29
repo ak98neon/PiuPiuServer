@@ -88,7 +88,7 @@ public class Client {
                                 parseRequest(bytes, i);
                                 break;
                             }
-                        }ª
+                        }
                     }
                 } catch (IOException | JsonIOException e) {
                     System.out.println(e.getMessage());
