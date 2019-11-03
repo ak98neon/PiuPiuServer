@@ -6,6 +6,7 @@ import com.unity.shooter.piupiu_server.model.Client;
 import com.unity.shooter.piupiu_server.model.dto.ClientDataDto;
 import com.unity.shooter.piupiu_server.service.ReceiveListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,8 +26,13 @@ public class Clients implements ReceiveListener {
     }
 
     @Override
-    public void removeClient(Client client) {
-        clients.remove(client);
+    public void removeClient(Client client) throws IOException {
+        int index = clients.indexOf(client);
+        if (index != -1) {
+            Client removeClient = clients.get(index);
+            removeClient.getClientSocketConnection().close();
+            clients.remove(client);
+        }
     }
 
     @Override

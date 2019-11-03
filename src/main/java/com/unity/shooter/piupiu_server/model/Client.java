@@ -8,6 +8,7 @@ import com.unity.shooter.piupiu_server.constants.ClientStatus;
 import com.unity.shooter.piupiu_server.model.dto.ClientDataDto;
 import com.unity.shooter.piupiu_server.service.ReceiveListener;
 import com.unity.shooter.piupiu_server.util.ByteBufferUtil;
+import lombok.Data;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,6 +16,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.UUID;
 
+@Data
 public class Client {
     private volatile Position position;
     private volatile Rotation rotation;
@@ -35,18 +37,6 @@ public class Client {
         rotation = new Rotation();
         new ReadThread().start();
         sendStart();
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public Position getPosition() {
-        return position;
-    }
-
-    public Rotation getRotation() {
-        return rotation;
     }
 
     private void sendStart() {
@@ -115,7 +105,7 @@ public class Client {
                 if (clientDataDto.getAction() == ClientStatus.REMOVE) {
                     listener.removeClient(Client.this);
                 }
-            } catch (JsonSyntaxException e) {
+            } catch (JsonSyntaxException | IOException e) {
                 System.out.println("Bad string " + requestJson);
             }
         }
