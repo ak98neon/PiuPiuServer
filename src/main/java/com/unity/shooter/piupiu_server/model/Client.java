@@ -4,11 +4,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
+import com.oracle.tools.packager.Log;
 import com.unity.shooter.piupiu_server.constants.ClientStatus;
 import com.unity.shooter.piupiu_server.model.dto.ClientDataDto;
 import com.unity.shooter.piupiu_server.service.ReceiveListener;
 import com.unity.shooter.piupiu_server.util.ByteBufferUtil;
 import lombok.Data;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,6 +19,7 @@ import java.net.Socket;
 import java.util.UUID;
 
 @Data
+@Log4j2
 public class Client {
     private volatile Position position;
     private volatile Rotation rotation;
@@ -47,14 +50,14 @@ public class Client {
 
     public void sendToClient(String json) {
         try {
-            System.out.println("sendToClient");
+            Log.info("sendToClient");
             byte[] bytes = json.getBytes();
             byte[] bytesSize = ByteBufferUtil.intToByteArray(json.length());
             outputStream.write(bytesSize, 0, 4);
             outputStream.write(bytes, 0, bytes.length);
             outputStream.flush();
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            Log.info(e.getMessage());
         }
     }
 
@@ -81,12 +84,12 @@ public class Client {
                         }
                     }
                 } catch (IOException | JsonIOException e) {
-                    System.out.println(e.getMessage());
+                    Log.info(e.getMessage());
                     try {
                         clientSocketConnection.close();
                         listener.removeClient(Client.this);
                     } catch (IOException ex) {
-                        System.out.println(e.getMessage());
+                        Log.info(e.getMessage());
                     }
                 }
             }
@@ -94,19 +97,21 @@ public class Client {
 
         private void parseRequest(byte[] bytes, int indexOfDelimeter) {
             String requestJson = new String(bytes, 0, indexOfDelimeter);
-            System.out.println(requestJson);
+            Log.info(requestJson);
 
             try {
+                if (requestJson.contains(ClientStatus.REMOVE.name())) {
+                    listener.dataReceive(Client.this, requestJson);
+                    listener.removeClient(Client.this);
+                }
+
                 ClientDataDto clientDataDto = gson.fromJson(requestJson, ClientDataDto.class);
                 position = clientDataDto.getPosition();
                 rotation = clientDataDto.getRotation();
 
                 listener.dataReceive(Client.this, requestJson);
-                if (clientDataDto.getAction() == ClientStatus.REMOVE) {
-                    listener.removeClient(Client.this);
-                }
             } catch (JsonSyntaxException | IOException e) {
-                System.out.println("Bad string " + requestJson);
+                Log.info("Bad string " + requestJson);
             }
         }
     }
