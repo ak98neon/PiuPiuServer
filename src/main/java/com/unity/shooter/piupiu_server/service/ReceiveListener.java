@@ -1,6 +1,6 @@
 package com.unity.shooter.piupiu_server.service;
 
-import com.unity.shooter.piupiu_server.model.Client;
+import com.unity.shooter.piupiu_server.client.Client;
 
 import java.io.IOException;
 

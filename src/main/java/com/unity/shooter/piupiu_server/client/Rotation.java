@@ -1,19 +1,21 @@
-package com.unity.shooter.piupiu_server.model;
+package com.unity.shooter.piupiu_server.client;
 
 import java.util.Objects;
 
-public class Position {
+public class Rotation {
     private String x;
     private String y;
     private String z;
+    private String w;
 
-    public Position() {
+    public Rotation() {
     }
 
-    public Position(String x, String y, String z) {
+    public Rotation(String x, String y, String z, String w) {
         this.x = x;
         this.y = y;
         this.z = z;
+        this.w = w;
     }
 
     public String getX() {
@@ -40,12 +42,21 @@ public class Position {
         this.z = z;
     }
 
+    public String getW() {
+        return w;
+    }
+
+    public void setW(String w) {
+        this.w = w;
+    }
+
     @Override
     public String toString() {
-        return "Position{" +
+        return "Rotation{" +
                 "x='" + x + '\'' +
                 ", y='" + y + '\'' +
                 ", z='" + z + '\'' +
+                ", w='" + w + '\'' +
                 '}';
     }
 
@@ -53,14 +64,15 @@ public class Position {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Position position = (Position) o;
-        return Objects.equals(x, position.x) &&
-                Objects.equals(y, position.y) &&
-                Objects.equals(z, position.z);
+        Rotation rotation = (Rotation) o;
+        return Objects.equals(x, rotation.x) &&
+                Objects.equals(y, rotation.y) &&
+                Objects.equals(z, rotation.z) &&
+                Objects.equals(w, rotation.w);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(x, y, z);
+        return Objects.hash(x, y, z, w);
     }
 }

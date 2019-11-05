@@ -1,32 +1,33 @@
-package com.unity.shooter.piupiu_server.model;
+package com.unity.shooter.piupiu_server.client;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
-import com.oracle.tools.packager.Log;
 import com.unity.shooter.piupiu_server.constants.ClientStatus;
-import com.unity.shooter.piupiu_server.model.dto.ClientDataDto;
+import com.unity.shooter.piupiu_server.service.MetricService;
 import com.unity.shooter.piupiu_server.service.ReceiveListener;
 import com.unity.shooter.piupiu_server.util.ByteBufferUtil;
-import lombok.Data;
-import lombok.extern.log4j.Log4j2;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.UUID;
+import java.util.logging.Logger;
 
-@Data
-@Log4j2
 public class Client {
-    private volatile Position position;
-    private volatile Rotation rotation;
+    private static Logger log = Logger.getLogger(Client.class.getName());
+    private static MetricService metricService = new MetricService();
+
+    private Position position;
+    private Rotation rotation;
     private Socket clientSocketConnection;
     private ReceiveListener listener;
-    private InputStream inputStream;
-    private OutputStream outputStream;
+    private BufferedInputStream inputStream;
+    private BufferedOutputStream outputStream;
     private String id = UUID.randomUUID().toString();
 
     private Gson gson = new GsonBuilder().setLenient().create();
@@ -34,8 +35,10 @@ public class Client {
     public Client(Socket clientSocketConnection, ReceiveListener listener) throws IOException {
         this.clientSocketConnection = clientSocketConnection;
         this.listener = listener;
-        inputStream = clientSocketConnection.getInputStream();
-        outputStream = clientSocketConnection.getOutputStream();
+        InputStream input = clientSocketConnection.getInputStream();
+        this.inputStream = new BufferedInputStream(input, 1024 * 1024);
+        OutputStream output = clientSocketConnection.getOutputStream();
+        this.outputStream = new BufferedOutputStream(output, 1024 * 1024);
         position = new Position();
         rotation = new Rotation();
         new ReadThread().start();
@@ -43,22 +46,38 @@ public class Client {
     }
 
     private void sendStart() {
-        ClientDataDto responseDto = new ClientDataDto(id, position, rotation, ClientStatus.NEW_SESSION);
+        ClientData responseDto = new ClientData(id, position, rotation, ClientStatus.NEW_SESSION);
         String json = gson.toJson(responseDto);
         sendToClient(json);
     }
 
     public void sendToClient(String json) {
         try {
-            Log.info("sendToClient");
+            log.info("sendToClient");
             byte[] bytes = json.getBytes();
             byte[] bytesSize = ByteBufferUtil.intToByteArray(json.length());
             outputStream.write(bytesSize, 0, 4);
             outputStream.write(bytes, 0, bytes.length);
             outputStream.flush();
         } catch (IOException e) {
-            Log.info(e.getMessage());
+            log.info(e.getMessage());
         }
+    }
+
+    public Position getPosition() {
+        return position;
+    }
+
+    public Rotation getRotation() {
+        return rotation;
+    }
+
+    public Socket getClientSocketConnection() {
+        return clientSocketConnection;
+    }
+
+    public String getId() {
+        return id;
     }
 
     private class ReadThread extends Thread {
@@ -75,21 +94,24 @@ public class Client {
                 try {
                     int data = inputStream.read(bytes);
                     if (data != -1) {
+                        long startTime = System.currentTimeMillis();
+
                         for (int i = 0; i < bytes.length; i++) {
                             if (patternOfDelimeter[0] == bytes[i]) {
                                 bytes[i] = 0;
                                 parseRequest(bytes, i);
+                                metricService.responseTime(startTime);
                                 break;
                             }
                         }
                     }
                 } catch (IOException | JsonIOException e) {
-                    Log.info(e.getMessage());
+                    log.info(e.getMessage());
                     try {
                         clientSocketConnection.close();
                         listener.removeClient(Client.this);
                     } catch (IOException ex) {
-                        Log.info(e.getMessage());
+                        log.info(e.getMessage());
                     }
                 }
             }
@@ -97,21 +119,21 @@ public class Client {
 
         private void parseRequest(byte[] bytes, int indexOfDelimeter) {
             String requestJson = new String(bytes, 0, indexOfDelimeter);
-            Log.info(requestJson);
+            log.info(requestJson);
 
             try {
                 if (requestJson.contains(ClientStatus.REMOVE.name())) {
                     listener.dataReceive(Client.this, requestJson);
                     listener.removeClient(Client.this);
+                } else {
+                    ClientData clientData = gson.fromJson(requestJson, ClientData.class);
+                    position = clientData.getPosition();
+                    rotation = clientData.getRotation();
+
+                    listener.dataReceive(Client.this, requestJson);
                 }
-
-                ClientDataDto clientDataDto = gson.fromJson(requestJson, ClientDataDto.class);
-                position = clientDataDto.getPosition();
-                rotation = clientDataDto.getRotation();
-
-                listener.dataReceive(Client.this, requestJson);
             } catch (JsonSyntaxException | IOException e) {
-                Log.info("Bad string " + requestJson);
+                log.info("Bad string " + requestJson);
             }
         }
     }

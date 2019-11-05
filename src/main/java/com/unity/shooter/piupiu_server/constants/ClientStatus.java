@@ -1,5 +1,5 @@
 package com.unity.shooter.piupiu_server.constants;
 
 public enum ClientStatus {
-    NEW_SESSION, NEW_CLIENT, MOVE, REMOVE, SHOOT, HIT
+    NEW_SESSION, NEW_CLIENT, REMOVE
 }

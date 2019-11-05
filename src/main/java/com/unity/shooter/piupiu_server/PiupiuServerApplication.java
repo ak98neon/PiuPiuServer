@@ -1,7 +1,7 @@
 package com.unity.shooter.piupiu_server;
 
-import com.unity.shooter.piupiu_server.container.Clients;
-import com.unity.shooter.piupiu_server.model.Client;
+import com.unity.shooter.piupiu_server.client.Client;
+import com.unity.shooter.piupiu_server.client.Clients;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
