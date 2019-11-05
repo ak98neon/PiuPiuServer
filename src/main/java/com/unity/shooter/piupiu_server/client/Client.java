@@ -92,13 +92,10 @@ public class Client {
                 try {
                     int data = inputStream.read(bytes);
                     if (data != -1) {
-                        long startTime = System.currentTimeMillis();
-
                         for (int i = 0; i < bytes.length; i++) {
                             if (patternOfDelimeter[0] == bytes[i]) {
                                 bytes[i] = 0;
                                 parseRequest(bytes, i);
-                                responseTime(startTime);
                                 break;
                             }
                         }
@@ -113,10 +110,6 @@ public class Client {
                     }
                 }
             }
-        }
-
-        private void responseTime(long startTime) {
-            log.info("Response time: " + (System.currentTimeMillis() - startTime));
         }
 
         private void parseRequest(byte[] bytes, int indexOfDelimeter) {
