@@ -1,5 +1,8 @@
 package com.unity.shooter.piupiu_server.client;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Objects;
 
 public class Position {
@@ -10,7 +13,8 @@ public class Position {
     public Position() {
     }
 
-    public Position(String x, String y, String z) {
+    @JsonCreator
+    public Position(@JsonProperty("x") String x, @JsonProperty("y") String y, @JsonProperty("z") String z) {
         this.x = x;
         this.y = y;
         this.z = z;

@@ -1,5 +1,8 @@
 package com.unity.shooter.piupiu_server.client;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Objects;
 
 public class Rotation {
@@ -11,7 +14,9 @@ public class Rotation {
     public Rotation() {
     }
 
-    public Rotation(String x, String y, String z, String w) {
+    @JsonCreator
+    public Rotation(@JsonProperty("x") String x, @JsonProperty("y") String y, @JsonProperty("z") String z,
+                    @JsonProperty("w") String w) {
         this.x = x;
         this.y = y;
         this.z = z;
