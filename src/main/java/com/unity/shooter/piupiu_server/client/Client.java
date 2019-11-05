@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.unity.shooter.piupiu_server.constants.ClientStatus;
-import com.unity.shooter.piupiu_server.service.MetricService;
 import com.unity.shooter.piupiu_server.service.ReceiveListener;
 import com.unity.shooter.piupiu_server.util.ByteBufferUtil;
 
@@ -20,7 +19,6 @@ import java.util.logging.Logger;
 
 public class Client {
     private static Logger log = Logger.getLogger(Client.class.getName());
-    private static MetricService metricService = new MetricService();
 
     private Position position;
     private Rotation rotation;
@@ -100,7 +98,7 @@ public class Client {
                             if (patternOfDelimeter[0] == bytes[i]) {
                                 bytes[i] = 0;
                                 parseRequest(bytes, i);
-                                metricService.responseTime(startTime);
+                                responseTime(startTime);
                                 break;
                             }
                         }
@@ -115,6 +113,10 @@ public class Client {
                     }
                 }
             }
+        }
+
+        private void responseTime(long startTime) {
+            log.info("Response time: " + (System.currentTimeMillis() - startTime));
         }
 
         private void parseRequest(byte[] bytes, int indexOfDelimeter) {
