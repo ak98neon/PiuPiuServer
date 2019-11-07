@@ -19,7 +19,7 @@ public class Clients implements ReceiveListener {
         clientList = new ArrayList<>();
     }
 
-    public void addClient(Client client) {
+    public synchronized void addClient(Client client) {
         log.info("addClient");
         clientList.add(client);
         sendConnectNewPlayer(client);
@@ -27,7 +27,7 @@ public class Clients implements ReceiveListener {
     }
 
     @Override
-    public void removeClient(Client client) throws IOException {
+    public synchronized void removeClient(Client client) throws IOException {
         int index = clientList.indexOf(client);
         if (index != -1) {
             Client removeClient = clientList.get(index);
@@ -37,16 +37,16 @@ public class Clients implements ReceiveListener {
     }
 
     @Override
-    public void dataReceive(Client client, String data) {
+    public synchronized void dataReceive(Client client, String data) {
         sendBroadcast(client, data);
     }
 
-    private void sendBroadcast(Client client, String data) {
+    private synchronized void sendBroadcast(Client client, String data) {
         log.info("sendBroadcast");
         clientList.stream().filter(item -> !item.getId().equals(client.getId())).forEach(item -> item.sendToClient(data));
     }
 
-    private void sendConnectNewPlayer(Client client) {
+    private synchronized void sendConnectNewPlayer(Client client) {
         log.info("sendConnectNewPlayer");
         for (Client item : clientList) {
             if (!item.getId().equals(client.getId())) {
@@ -58,7 +58,7 @@ public class Clients implements ReceiveListener {
         }
     }
 
-    private void getAllPlayers(Client client) {
+    private synchronized void getAllPlayers(Client client) {
         log.info("getAllPlayers");
         clientList.stream().filter(item -> item != client).map(item -> new ClientData(item.getId(), item.getPosition(),
                 item.getRotation(), ClientStatus.NEW_CLIENT)).map(responseDto -> gson.toJson(responseDto)).forEach(client::sendToClient);
