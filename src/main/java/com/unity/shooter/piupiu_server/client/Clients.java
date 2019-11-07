@@ -48,8 +48,14 @@ public class Clients implements ReceiveListener {
 
     private void sendConnectNewPlayer(Client client) {
         log.info("sendConnectNewPlayer");
-        clientList.stream().map(item -> new ClientData(client.getId(), client.getPosition(),
-                client.getRotation(), ClientStatus.NEW_CLIENT)).map(responseDto -> gson.toJson(responseDto)).forEach(json -> sendBroadcast(client, json));
+        for (Client item : clientList) {
+            if (!item.getId().equals(client.getId())) {
+                ClientData responseDto = new ClientData(client.getId(), client.getPosition(),
+                        client.getRotation(), ClientStatus.NEW_CLIENT);
+                String json = gson.toJson(responseDto);
+                sendBroadcast(client, json);
+            }
+        }
     }
 
     private void getAllPlayers(Client client) {
