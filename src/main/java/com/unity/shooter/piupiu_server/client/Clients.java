@@ -12,12 +12,8 @@ import java.util.logging.Logger;
 public class Clients implements ReceiveListener {
     private static Logger log = Logger.getLogger(Clients.class.getName());
 
-    private List<Client> clientList;
+    private static List<Client> clientList = new ArrayList<>();
     private Gson gson = new Gson();
-
-    public Clients() {
-        clientList = new ArrayList<>();
-    }
 
     public synchronized void addClient(Client client) {
         log.info("addClient");
@@ -62,5 +58,9 @@ public class Clients implements ReceiveListener {
         log.info("getAllPlayers");
         clientList.stream().filter(item -> item != client).map(item -> new ClientData(item.getId(), item.getPosition(),
                 item.getRotation(), ClientStatus.NEW_CLIENT)).map(responseDto -> gson.toJson(responseDto)).forEach(client::sendToClient);
+    }
+
+    public static List<Client> getClientList() {
+        return clientList;
     }
 }
