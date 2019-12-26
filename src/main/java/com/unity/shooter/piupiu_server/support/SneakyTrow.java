@@ -1,6 +1,6 @@
 package com.unity.shooter.piupiu_server.support;
 
-import java.util.function.Supplier;
+import java.util.concurrent.Callable;
 
 import static java.util.Objects.requireNonNull;
 
@@ -14,11 +14,11 @@ public final class SneakyTrow {
         throw (T) t;
     }
 
-    public static <T> Supplier<T> sneaky(Supplier<T> supplier) {
-        requireNonNull(supplier);
+    public static <T> Callable<T> sneaky(Callable<? extends T> callable) {
+        requireNonNull(callable);
         return () -> {
             try {
-                return supplier.get();
+                return callable.call();
             } catch (final Exception ex) {
                 sneakyThrow(new RuntimeException(ex.getMessage()));
             }

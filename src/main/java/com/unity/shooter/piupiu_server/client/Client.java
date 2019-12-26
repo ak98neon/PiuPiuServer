@@ -4,7 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
-import com.unity.shooter.piupiu_server.constants.ClientStatus;
+import com.unity.shooter.piupiu_server.constants.Action;
+import com.unity.shooter.piupiu_server.constants.ClientActionType;
 import com.unity.shooter.piupiu_server.service.ReceiveListener;
 import com.unity.shooter.piupiu_server.util.ByteBufferUtil;
 
@@ -44,7 +45,7 @@ public class Client {
     }
 
     private void sendStart() {
-        ClientData responseDto = new ClientData(id, position, rotation, ClientStatus.NEW_SESSION);
+        ClientData responseDto = new ClientData(id, position, rotation, ClientActionType.PLAYER, Action.NEW_SESSION);
         String json = gson.toJson(responseDto);
         sendToClient(json);
     }
@@ -117,7 +118,7 @@ public class Client {
             log.info(requestJson);
 
             try {
-                if (requestJson.contains(ClientStatus.REMOVE.name())) {
+                if (requestJson.contains(Action.REMOVE_CLIENT.name())) {
                     listener.dataReceive(Client.this, requestJson);
                     listener.removeClient(Client.this);
                 } else {

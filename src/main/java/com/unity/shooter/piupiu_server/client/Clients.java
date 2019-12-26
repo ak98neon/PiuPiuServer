@@ -1,7 +1,8 @@
 package com.unity.shooter.piupiu_server.client;
 
 import com.google.gson.Gson;
-import com.unity.shooter.piupiu_server.constants.ClientStatus;
+import com.unity.shooter.piupiu_server.constants.Action;
+import com.unity.shooter.piupiu_server.constants.ClientActionType;
 import com.unity.shooter.piupiu_server.service.ReceiveListener;
 
 import java.io.IOException;
@@ -53,7 +54,7 @@ public class Clients implements ReceiveListener {
         for (Client item : clientList) {
             if (!item.getId().equals(client.getId())) {
                 ClientData responseDto = new ClientData(client.getId(), client.getPosition(),
-                        client.getRotation(), ClientStatus.NEW_CLIENT);
+                        client.getRotation(), ClientActionType.PLAYER, Action.NEW_CLIENT);
                 String json = gson.toJson(responseDto);
                 sendBroadcast(client, json);
             }
@@ -63,6 +64,7 @@ public class Clients implements ReceiveListener {
     private synchronized void getAllPlayers(Client client) {
         log.info("getAllPlayers");
         clientList.stream().filter(item -> item != client).map(item -> new ClientData(item.getId(), item.getPosition(),
-                item.getRotation(), ClientStatus.NEW_CLIENT)).map(responseDto -> gson.toJson(responseDto)).forEach(client::sendToClient);
+                item.getRotation(), ClientActionType.PLAYER, Action.NEW_CLIENT))
+                .map(responseDto -> gson.toJson(responseDto)).forEach(client::sendToClient);
     }
 }
