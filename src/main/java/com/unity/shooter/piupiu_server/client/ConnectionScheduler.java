@@ -14,7 +14,7 @@ public class ConnectionScheduler {
         this.gson = gson;
     }
 
-    @Scheduled(fixedRate = 150_000, initialDelay = 10_000)
+    @Scheduled(fixedRate = 30_000, initialDelay = 10_000)
     public void isConnectionClientAlive() {
         Clients.getClientList().forEach(x ->
         {
