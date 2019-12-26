@@ -58,7 +58,7 @@ public class Client {
             outputStream.write(bytes, 0, bytes.length);
             outputStream.flush();
         } catch (IOException e) {
-            log.info(e.getMessage());
+            log.warning(e.getMessage());
         }
     }
 
@@ -128,7 +128,7 @@ public class Client {
                     listener.dataReceive(Client.this, requestJson);
                 }
             } catch (JsonSyntaxException | IOException e) {
-                log.info("Bad string " + requestJson);
+                log.warning("Bad string " + requestJson);
             }
         }
     }

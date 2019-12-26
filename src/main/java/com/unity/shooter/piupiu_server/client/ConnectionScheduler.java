@@ -5,9 +5,13 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.util.logging.Logger;
+
 @Component
 @EnableScheduling
 public class ConnectionScheduler {
+    private static Logger log = Logger.getLogger(ConnectionScheduler.class.getName());
     private Gson gson;
 
     public ConnectionScheduler(Gson gson) {
@@ -21,7 +25,13 @@ public class ConnectionScheduler {
             try {
                 x.sendToClient(gson.toJson("Check client"));
             } catch (Exception e) {
-                Clients.getClientList().remove(x);
+                log.warning(e.getMessage());
+                try {
+                    new Clients().removeClient(x);
+                } catch (IOException ex) {
+                    log.warning(ex.getMessage());
+                    Clients.getClientList().remove(x);
+                }
             }
         });
     }

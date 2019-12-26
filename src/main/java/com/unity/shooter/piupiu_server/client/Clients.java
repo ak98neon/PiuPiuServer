@@ -15,6 +15,10 @@ public class Clients implements ReceiveListener {
     private static List<Client> clientList = new ArrayList<>();
     private Gson gson = new Gson();
 
+    public static List<Client> getClientList() {
+        return clientList;
+    }
+
     public synchronized void addClient(Client client) {
         log.info("addClient");
         clientList.add(client);
@@ -39,7 +43,9 @@ public class Clients implements ReceiveListener {
 
     private synchronized void sendBroadcast(Client client, String data) {
         log.info("sendBroadcast");
-        clientList.stream().filter(item -> !item.getId().equals(client.getId())).forEach(item -> item.sendToClient(data));
+        clientList.stream()
+                .filter(item -> !item.getId().equals(client.getId()))
+                .forEach(item -> item.sendToClient(data));
     }
 
     private synchronized void sendConnectNewPlayer(Client client) {
@@ -58,9 +64,5 @@ public class Clients implements ReceiveListener {
         log.info("getAllPlayers");
         clientList.stream().filter(item -> item != client).map(item -> new ClientData(item.getId(), item.getPosition(),
                 item.getRotation(), ClientStatus.NEW_CLIENT)).map(responseDto -> gson.toJson(responseDto)).forEach(client::sendToClient);
-    }
-
-    public static List<Client> getClientList() {
-        return clientList;
     }
 }
