@@ -1,8 +1,17 @@
 package com.unity.shooter.piupiu_server.constants;
 
 public enum Action {
-    ANIMAL_MOVE,
+    //Player
     NEW_SESSION,
     NEW_CLIENT,
-    REMOVE_CLIENT
+    REMOVE_CLIENT,
+    PLAYER_SHOOT,
+    PLAYER_MOVE,
+    HIT_PLAYER,
+    KILL_CLIENT,
+
+    //Animal
+    ANIMAL_MOVE,
+    ANIMAL_DIE,
+    ANIMAL_CREATE
 }

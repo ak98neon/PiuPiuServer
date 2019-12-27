@@ -45,7 +45,7 @@ public class Client {
     }
 
     private void sendStart() {
-        ClientData responseDto = new ClientData(id, position, rotation, ClientActionType.PLAYER, Action.NEW_SESSION);
+        RequestData responseDto = new RequestData(id, position, rotation, ClientActionType.PLAYER, Action.NEW_SESSION);
         String json = gson.toJson(responseDto);
         sendToClient(json);
     }
@@ -122,9 +122,9 @@ public class Client {
                     listener.dataReceive(Client.this, requestJson);
                     listener.removeClient(Client.this);
                 } else {
-                    ClientData clientData = gson.fromJson(requestJson, ClientData.class);
-                    position = clientData.getPosition();
-                    rotation = clientData.getRotation();
+                    RequestData requestData = gson.fromJson(requestJson, RequestData.class);
+                    position = requestData.getPosition();
+                    rotation = requestData.getRotation();
 
                     listener.dataReceive(Client.this, requestJson);
                 }

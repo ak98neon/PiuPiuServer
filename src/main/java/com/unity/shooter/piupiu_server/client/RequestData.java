@@ -9,7 +9,7 @@ import com.unity.shooter.piupiu_server.constants.ClientActionType;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonInclude(Include.NON_NULL)
-public class ClientData {
+public class RequestData {
     private String id;
     private Position position;
     private Rotation rotation;
@@ -17,11 +17,11 @@ public class ClientData {
     private Action action;
 
     @JsonCreator
-    public ClientData(@JsonProperty("id") String id,
-                      @JsonProperty("position") Position position,
-                      @JsonProperty("rotation") Rotation rotation,
-                      @JsonProperty("actionType") ClientActionType actionType,
-                      @JsonProperty("action") Action action) {
+    public RequestData(@JsonProperty("id") String id,
+                       @JsonProperty("position") Position position,
+                       @JsonProperty("rotation") Rotation rotation,
+                       @JsonProperty("actionType") ClientActionType actionType,
+                       @JsonProperty("action") Action action) {
         this.id = id;
         this.position = position;
         this.rotation = rotation;

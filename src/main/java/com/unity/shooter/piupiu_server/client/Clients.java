@@ -3,6 +3,7 @@ package com.unity.shooter.piupiu_server.client;
 import com.google.gson.Gson;
 import com.unity.shooter.piupiu_server.constants.Action;
 import com.unity.shooter.piupiu_server.constants.ClientActionType;
+import com.unity.shooter.piupiu_server.environment.GameEnvironment;
 import com.unity.shooter.piupiu_server.service.ReceiveListener;
 
 import java.io.IOException;
@@ -25,6 +26,7 @@ public class Clients implements ReceiveListener {
         clientList.add(client);
         sendConnectNewPlayer(client);
         getAllPlayers(client);
+        sendGameEnvironmentToNewPlayer(client, GameEnvironment.getEnvironment());
     }
 
     @Override
@@ -53,7 +55,7 @@ public class Clients implements ReceiveListener {
         log.info("sendConnectNewPlayer");
         for (Client item : clientList) {
             if (!item.getId().equals(client.getId())) {
-                ClientData responseDto = new ClientData(client.getId(), client.getPosition(),
+                RequestData responseDto = new RequestData(client.getId(), client.getPosition(),
                         client.getRotation(), ClientActionType.PLAYER, Action.NEW_CLIENT);
                 String json = gson.toJson(responseDto);
                 sendBroadcast(client, json);
@@ -61,9 +63,16 @@ public class Clients implements ReceiveListener {
         }
     }
 
+    private synchronized void sendGameEnvironmentToNewPlayer(Client client, List<RequestData> requestDataList) {
+        log.info("sendGameEnvironmentToNewPlayer");
+        requestDataList.stream()
+                .map(dto -> gson.toJson(dto))
+                .forEach(client::sendToClient);
+    }
+
     private synchronized void getAllPlayers(Client client) {
         log.info("getAllPlayers");
-        clientList.stream().filter(item -> item != client).map(item -> new ClientData(item.getId(), item.getPosition(),
+        clientList.stream().filter(item -> item != client).map(item -> new RequestData(item.getId(), item.getPosition(),
                 item.getRotation(), ClientActionType.PLAYER, Action.NEW_CLIENT))
                 .map(responseDto -> gson.toJson(responseDto)).forEach(client::sendToClient);
     }
