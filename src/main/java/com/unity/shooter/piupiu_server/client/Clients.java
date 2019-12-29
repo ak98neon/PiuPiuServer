@@ -35,6 +35,9 @@ public class Clients implements ReceiveListener {
         if (index != -1) {
             Client removeClient = clientList.get(index);
             removeClient.getClientSocketConnection().close();
+            RequestData removeRequest = new RequestData(client.getId(), new Position(), new Rotation(),
+                    ClientActionType.PLAYER, Action.REMOVE_CLIENT);
+            sendBroadcast(client, gson.toJson(removeRequest));
             clientList.remove(client);
         }
     }
